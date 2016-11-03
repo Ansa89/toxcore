@@ -193,8 +193,7 @@ int main(int argc, char *argv[])
     IP ip;
     ip_init(&ip, ipv6enabled);
 
-    // TODO(#219)
-    DHT *dht = new_DHT(NULL, new_networking(NULL, ip, PORT));
+    DHT *dht = new_DHT(NULL, new_networking(NULL, ip, PORT, PORT + (TOX_PORTRANGE_TO - TOX_PORTRANGE_FROM), 0, 0));
     printf("OUR ID: ");
     uint32_t i;
 

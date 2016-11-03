@@ -224,16 +224,14 @@ int main(int argc, char *argv[])
     IP ip;
     ip_init(&ip, enable_ipv6);
 
-    // TODO(#219)
-    Networking_Core *net = new_networking(NULL, ip, port);
+    Networking_Core *net = new_networking(NULL, ip, port, port + (TOX_PORTRANGE_TO - TOX_PORTRANGE_FROM), 0, 0);
 
     if (net == NULL) {
         if (enable_ipv6 && enable_ipv4_fallback) {
             write_log(LOG_LEVEL_WARNING, "Couldn't initialize IPv6 networking. Falling back to using IPv4.\n");
             enable_ipv6 = 0;
             ip_init(&ip, enable_ipv6);
-            // TODO(#219)
-            net = new_networking(NULL, ip, port);
+            net = new_networking(NULL, ip, port, port + (TOX_PORTRANGE_TO - TOX_PORTRANGE_FROM), 0, 0);
 
             if (net == NULL) {
                 write_log(LOG_LEVEL_ERROR, "Couldn't fallback to IPv4. Exiting.\n");
@@ -288,8 +286,7 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        // TODO(#219)
-        tcp_server = new_TCP_server(NULL, enable_ipv6, tcp_relay_port_count, tcp_relay_ports, dht->self_secret_key, onion);
+        tcp_server = new_TCP_server(NULL, enable_ipv6, tcp_relay_port_count, tcp_relay_ports, 0, dht->self_secret_key, onion);
 
         // tcp_relay_port_count != 0 at this point
         free(tcp_relay_ports);
