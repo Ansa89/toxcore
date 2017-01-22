@@ -24,6 +24,12 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#if defined(__GNUC__)
+#define GNU_EXTENSION __extension__
+#else
+#define GNU_EXTENSION
+#endif
+
 #ifdef PLAN9
 #include <u.h> // Plan 9 requires this is imported first
 // Comment line here to avoid reordering by source code formatters.
@@ -168,7 +174,7 @@ IP6;
 
 typedef struct {
     uint8_t family;
-    __extension__ union {
+    GNU_EXTENSION union {
         IP4 ip4;
         IP6 ip6;
     };
@@ -198,12 +204,16 @@ IP_Port;
 
 /* ip_ntoa
  *   converts ip into a string
- *   uses a static buffer, so mustn't used multiple times in the same output
+ *   ip_str must be of length at least IP_NTOA_LEN
  *
  *   IPv6 addresses are enclosed into square brackets, i.e. "[IPv6]"
  *   writes error message into the buffer on error
+ *
+ *   returns ip_str
  */
-const char *ip_ntoa(const IP *ip);
+/* this would be INET6_ADDRSTRLEN, but it might be too short for the error message */
+#define IP_NTOA_LEN 96 // TODO(irungentoo): magic number. Why not INET6_ADDRSTRLEN ?
+const char *ip_ntoa(const IP *ip, char *ip_str, size_t length);
 
 /*
  * ip_parse_addr
